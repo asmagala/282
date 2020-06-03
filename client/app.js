@@ -7,6 +7,11 @@ const messageContentInput = document.getElementById('message-content');
 
 var userName = '';
 
+const socket = io();
+//socket.on('message', (event) => addMessage(event.author, event.content));
+socket.on('message', ({author, content}) => addMessage(author, content));
+
+
 function login(e) {
   e.preventDefault();
   if (userNameInput.value.trim()) {
@@ -20,11 +25,13 @@ function login(e) {
 
 function sendMessage(e) {
   e.preventDefault();
-  if(messageContentInput.value.trim() ) {
-    addMessage(userName, messageContentInput.value);
-    messageContentInput.value = '';
+  let messageContent = messageContentInput.value.trim();
+  if(messageContent ) {
+    addMessage(userName, messageContent);
+    socket.emit('message', { author: userName, content: messageContent});
+    messageContent = '';
   } else {
-    alert('Nie można wysłać "pustej" wiadomości');
+    alert('You have to type something!');
   }
 };
 
