@@ -39,13 +39,9 @@ function sendMessage(e) {
     socket.emit('message', { author: userName, content: messageContent })
     messageContentInput.value = '';
   }
-
 }
 
 function addMessage(author, content) {
-
-  console.log(messagesList);
-
   const message = document.createElement('li');
   message.classList.add('message');
   message.classList.add('message--received');
@@ -56,9 +52,6 @@ function addMessage(author, content) {
       ${content}
     </div>
   `;
-
-  console.log(message);
-
   messagesList.appendChild(message);
 }
 
