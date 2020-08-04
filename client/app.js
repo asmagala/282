@@ -8,9 +8,9 @@ const messageContentInput = document.getElementById('message-content');
 var userName = '';
 
 const socket = io();
-//socket.on('message', (event) => addMessage(event.author, event.content));
 socket.on('message', ({author, content}) => addMessage(author, content));
-
+socket.on('removeUser', removeUser => addMessage('Chat Bot', `${removeUser} has left the conversation... :(`));
+socket.on('newUser', newUser => addMessage('Chat Bot', `${newUser} has joined the conversation!`));
 
 function login(e) {
   e.preventDefault();
@@ -18,6 +18,9 @@ function login(e) {
     userName = userNameInput.value;
     loginForm.classList.remove('show');
     messagesSection.classList.add('show');
+
+    socket.emit('join', { name: userName, id: '' });
+
   } else {
     alert('Proszę podać swój login.');
   }
@@ -25,15 +28,19 @@ function login(e) {
 
 function sendMessage(e) {
   e.preventDefault();
-  let messageContent = messageContentInput.value.trim();
-  if(messageContent ) {
-    addMessage(userName, messageContent);
-    socket.emit('message', { author: userName, content: messageContent});
-    messageContent = '';
-  } else {
+
+  let messageContent = messageContentInput.value;
+
+  if(!messageContent.length) {
     alert('You have to type something!');
   }
-};
+  else {
+    addMessage(userName, messageContent);
+    socket.emit('message', { author: userName, content: messageContent })
+    messageContentInput.value = '';
+  }
+
+}
 
 function addMessage(author, content) {
 
